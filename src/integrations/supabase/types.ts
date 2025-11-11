@@ -14,16 +14,326 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_insights: {
+        Row: {
+          created_at: string | null
+          id: string
+          project_id: string
+          summary: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          project_id: string
+          summary?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          project_id?: string
+          summary?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_insights_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_challenges: {
+        Row: {
+          challenge: string
+          created_at: string | null
+          id: string
+          insight_id: string
+        }
+        Insert: {
+          challenge: string
+          created_at?: string | null
+          id?: string
+          insight_id: string
+        }
+        Update: {
+          challenge?: string
+          created_at?: string | null
+          id?: string
+          insight_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_challenges_insight_id_fkey"
+            columns: ["insight_id"]
+            isOneToOne: false
+            referencedRelation: "ai_insights"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_studies: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          industry: string
+          result: string
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: string
+          industry: string
+          result: string
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          industry?: string
+          result?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_studies_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      discovery_questions: {
+        Row: {
+          category: string
+          created_at: string | null
+          id: string
+          insight_id: string
+          question: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          id?: string
+          insight_id: string
+          question: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          id?: string
+          insight_id?: string
+          question?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discovery_questions_insight_id_fkey"
+            columns: ["insight_id"]
+            isOneToOne: false
+            referencedRelation: "ai_insights"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          client: string
+          created_at: string | null
+          id: string
+          industry: string
+          name: string
+          project_type: string | null
+          region: string | null
+          rfp_file_url: string | null
+          status: Database["public"]["Enums"]["project_status"] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          client: string
+          created_at?: string | null
+          id?: string
+          industry: string
+          name: string
+          project_type?: string | null
+          region?: string | null
+          rfp_file_url?: string | null
+          status?: Database["public"]["Enums"]["project_status"] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          client?: string
+          created_at?: string | null
+          id?: string
+          industry?: string
+          name?: string
+          project_type?: string | null
+          region?: string | null
+          rfp_file_url?: string | null
+          status?: Database["public"]["Enums"]["project_status"] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      proposals: {
+        Row: {
+          content: Json | null
+          created_at: string | null
+          id: string
+          project_id: string
+          template_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          project_id: string
+          template_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          project_id?: string
+          template_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposals_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      value_propositions: {
+        Row: {
+          created_at: string | null
+          id: string
+          insight_id: string
+          proposition: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          insight_id: string
+          proposition: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          insight_id?: string
+          proposition?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "value_propositions_insight_id_fkey"
+            columns: ["insight_id"]
+            isOneToOne: false
+            referencedRelation: "ai_insights"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      project_status: "New" | "In Progress" | "Completed" | "On Hold"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +460,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      project_status: ["New", "In Progress", "Completed", "On Hold"],
+    },
   },
 } as const
