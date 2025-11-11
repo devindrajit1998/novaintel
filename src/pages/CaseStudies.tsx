@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { 
-  Sparkles, 
   Search,
   Plus,
   Eye,
@@ -49,123 +48,106 @@ const CaseStudies = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-hero">
-      {/* Header */}
-      <header className="border-b border-border/50 backdrop-blur-md sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-8 h-8 text-primary" />
-              <span className="text-2xl font-bold gradient-text">NovaIntel</span>
-            </div>
-            <Link to="/dashboard">
-              <Button variant="ghost">Back to Dashboard</Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className="container mx-auto px-6 py-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Case Studies</h1>
+        <p className="text-muted-foreground">Browse and manage your success stories</p>
+      </div>
 
-      <div className="container mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Case Studies</h1>
-          <p className="text-muted-foreground">Browse and manage your success stories</p>
+      {/* Search and Actions */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-8">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Input
+            placeholder="Search by keyword or industry..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 bg-input/50 border-border/50"
+          />
         </div>
+        <Button variant="hero">
+          <Plus className="w-5 h-5" />
+          Add Case Study
+        </Button>
+      </div>
 
-        {/* Search and Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              placeholder="Search by keyword or industry..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-input/50 border-border/50"
-            />
-          </div>
+      {/* Case Studies Grid */}
+      {isLoading ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Loading case studies...</p>
+        </div>
+      ) : filteredCases.length === 0 ? (
+        <Card className="glass-card p-12 text-center">
+          <p className="text-muted-foreground mb-4">
+            {searchQuery ? "No case studies match your search" : "No case studies yet"}
+          </p>
           <Button variant="hero">
             <Plus className="w-5 h-5" />
-            Add Case Study
+            Create Your First Case Study
           </Button>
+        </Card>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredCases.map((caseStudy) => (
+            <Card 
+              key={caseStudy.id} 
+              className="glass-card p-6 hover:scale-105 transition-all cursor-pointer group"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <Badge className="bg-primary/20 text-primary border-primary/30">
+                  {caseStudy.industry}
+                </Badge>
+                <div className="flex gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedCase(caseStudy);
+                    }}
+                  >
+                    <Eye className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toast.info("Edit functionality coming soon");
+                    }}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(caseStudy.id);
+                    }}
+                  >
+                    <Trash2 className="w-4 h-4 text-destructive" />
+                  </Button>
+                </div>
+              </div>
+
+              <h3 className="text-xl font-bold mb-3">{caseStudy.title}</h3>
+              
+              <div className="flex items-center gap-2 mb-3 text-accent">
+                <TrendingUp className="w-5 h-5" />
+                <span className="font-semibold">{caseStudy.result}</span>
+              </div>
+
+              <p className="text-sm text-muted-foreground line-clamp-3">
+                {caseStudy.description}
+              </p>
+            </Card>
+          ))}
         </div>
-
-        {/* Case Studies Grid */}
-        {isLoading ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Loading case studies...</p>
-          </div>
-        ) : filteredCases.length === 0 ? (
-          <Card className="glass-card p-12 text-center">
-            <p className="text-muted-foreground mb-4">
-              {searchQuery ? "No case studies match your search" : "No case studies yet"}
-            </p>
-            <Button variant="hero">
-              <Plus className="w-5 h-5" />
-              Create Your First Case Study
-            </Button>
-          </Card>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCases.map((caseStudy) => (
-              <Card 
-                key={caseStudy.id} 
-                className="glass-card p-6 hover:scale-105 transition-all cursor-pointer group"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <Badge className="bg-primary/20 text-primary border-primary/30">
-                    {caseStudy.industry}
-                  </Badge>
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedCase(caseStudy);
-                      }}
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toast.info("Edit functionality coming soon");
-                      }}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(caseStudy.id);
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </Button>
-                  </div>
-                </div>
-
-                <h3 className="text-xl font-bold mb-3">{caseStudy.title}</h3>
-                
-                <div className="flex items-center gap-2 mb-3 text-accent">
-                  <TrendingUp className="w-5 h-5" />
-                  <span className="font-semibold">{caseStudy.result}</span>
-                </div>
-
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                  {caseStudy.description}
-                </p>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Case Study Detail Dialog */}
       <Dialog open={!!selectedCase} onOpenChange={() => setSelectedCase(null)}>

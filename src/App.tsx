@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Routes, Route } from "react-router-dom";
+import { AppLayout } from "@/components/AppLayout";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -17,14 +18,18 @@ const App = () => (
     <Toaster />
     <Sonner />
     <Routes>
+      {/* Public routes without sidebar */}
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/new-project" element={<NewProject />} />
-      <Route path="/insights/:id" element={<AIInsights />} />
-      <Route path="/proposal/:id" element={<ProposalBuilder />} />
-      <Route path="/case-studies" element={<CaseStudies />} />
-      <Route path="/settings" element={<Settings />} />
+      
+      {/* Protected routes with sidebar */}
+      <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
+      <Route path="/new-project" element={<AppLayout><NewProject /></AppLayout>} />
+      <Route path="/insights/:id" element={<AppLayout><AIInsights /></AppLayout>} />
+      <Route path="/proposal/:id" element={<AppLayout><ProposalBuilder /></AppLayout>} />
+      <Route path="/case-studies" element={<AppLayout><CaseStudies /></AppLayout>} />
+      <Route path="/settings" element={<AppLayout><Settings /></AppLayout>} />
+      
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>
