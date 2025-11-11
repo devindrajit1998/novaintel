@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -22,15 +22,26 @@ import {
   TrendingUp,
   Eye,
   Edit,
-  Trash2
+  Trash2,
+  LogOut
 } from "lucide-react";
-import { mockProjects, mockStats, Project } from "@/lib/mockData";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { useProjects } from "@/hooks/useProjects";
+import { format } from "date-fns";
 
 const Dashboard = () => {
-  const [projects, setProjects] = useState<Project[]>(mockProjects);
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const { projects, isLoading, deleteProject } = useProjects();
 
-  const getStatusColor = (status: Project['status']) => {
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'Completed':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
@@ -45,33 +56,38 @@ const Dashboard = () => {
     }
   };
 
-  const handleDelete = (id: number) => {
-    setProjects(projects.filter(p => p.id !== id));
-    toast.success("Project deleted successfully");
+  const handleDelete = (id: string) => {
+    if (confirm("Are you sure you want to delete this project?")) {
+      deleteProject(id);
+    }
   };
 
   const stats = [
     { 
       title: "Active Projects", 
-      value: mockStats.activeProjects, 
+      value: projects?.length || 0, 
       icon: Briefcase,
       color: "text-primary"
     },
     { 
-      title: "Time Saved", 
-      value: mockStats.timeSaved, 
+      title: "This Month", 
+      value: projects?.filter(p => {
+        const created = new Date(p.created_at);
+        const now = new Date();
+        return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
+      }).length || 0, 
       icon: Clock,
       color: "text-accent"
     },
     { 
-      title: "Client Satisfaction", 
-      value: mockStats.clientSatisfaction, 
+      title: "In Progress", 
+      value: projects?.filter(p => p.status === "In Progress").length || 0, 
       icon: Heart,
       color: "text-secondary"
     },
     { 
-      title: "Top Domain", 
-      value: mockStats.topDomain, 
+      title: "Completed", 
+      value: projects?.filter(p => p.status === "Completed").length || 0, 
       icon: TrendingUp,
       color: "text-primary-glow"
     },
@@ -94,6 +110,9 @@ const Dashboard = () => {
               <Button variant="ghost" size="icon">
                 <User className="w-5 h-5" />
               </Button>
+              <Button variant="ghost" size="icon" onClick={signOut}>
+                <LogOut className="w-5 h-5" />
+              </Button>
               <Link to="/new-project">
                 <Button variant="hero">
                   <Plus className="w-5 h-5" />
@@ -108,7 +127,9 @@ const Dashboard = () => {
       <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back! Here's your presales overview.</p>
+          <p className="text-muted-foreground">
+            Welcome back{user?.email ? `, ${user.email}` : ""}! Here's your presales overview.
+          </p>
         </div>
 
         {/* Stats Cards */}
@@ -159,38 +180,54 @@ const Dashboard = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {projects.map((project) => (
-                  <TableRow key={project.id} className="hover:bg-muted/20">
-                    <TableCell className="font-medium">{project.name}</TableCell>
-                    <TableCell>{project.client}</TableCell>
-                    <TableCell>{project.industry}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(project.status)}>
-                        {project.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{project.updated}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-end gap-2">
-                        <Link to={`/insights/${project.id}`}>
-                          <Button variant="ghost" size="icon">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        </Link>
-                        <Button variant="ghost" size="icon">
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon"
-                          onClick={() => handleDelete(project.id)}
-                        >
-                          <Trash2 className="w-4 h-4 text-destructive" />
-                        </Button>
-                      </div>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8">
+                      Loading projects...
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : !projects || projects.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8">
+                      No projects yet. Create your first project!
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  projects.map((project) => (
+                    <TableRow key={project.id} className="hover:bg-muted/20">
+                      <TableCell className="font-medium">{project.name}</TableCell>
+                      <TableCell>{project.client}</TableCell>
+                      <TableCell>{project.industry}</TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(project.status)}>
+                          {project.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {format(new Date(project.updated_at), "MMM d, yyyy")}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center justify-end gap-2">
+                          <Link to={`/insights/${project.id}`}>
+                            <Button variant="ghost" size="icon">
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                          </Link>
+                          <Button variant="ghost" size="icon">
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            onClick={() => handleDelete(project.id)}
+                          >
+                            <Trash2 className="w-4 h-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>

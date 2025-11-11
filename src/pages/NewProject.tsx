@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,30 +13,43 @@ import {
 } from "@/components/ui/select";
 import { Sparkles, Upload, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { useProjects } from "@/hooks/useProjects";
 
 const NewProject = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { createProject } = useProjects();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [formData, setFormData] = useState({
-    clientName: "",
+    name: "",
+    client: "",
     industry: "",
-    projectType: "",
+    project_type: "",
     region: "",
   });
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
   const handleAnalyze = () => {
-    if (!formData.clientName || !formData.industry) {
-      toast.error("Please fill in required fields");
+    if (!formData.name || !formData.client || !formData.industry) {
+      toast.error("Please fill in all required fields");
       return;
     }
 
     setIsAnalyzing(true);
-    // Simulate AI analysis
+    
+    createProject(formData);
+    
     setTimeout(() => {
       setIsAnalyzing(false);
-      toast.success("RFP analyzed successfully!");
-      navigate("/insights/new");
-    }, 2000);
+      toast.success("Project created successfully!");
+      navigate("/dashboard");
+    }, 1000);
   };
 
   return (
@@ -68,15 +81,25 @@ const NewProject = () => {
         <div className="space-y-6">
           {/* Client Information */}
           <Card className="glass-card p-6">
-            <h2 className="text-2xl font-bold mb-6">Client Information</h2>
+            <h2 className="text-2xl font-bold mb-6">Project Information</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="clientName">Client Name *</Label>
+                <Label htmlFor="name">Project Name *</Label>
                 <Input
-                  id="clientName"
+                  id="name"
+                  placeholder="e.g., Healthcare Cloud Migration"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="bg-input/50 border-border/50"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="client">Client Name *</Label>
+                <Input
+                  id="client"
                   placeholder="Enter client name"
-                  value={formData.clientName}
-                  onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+                  value={formData.client}
+                  onChange={(e) => setFormData({ ...formData, client: e.target.value })}
                   className="bg-input/50 border-border/50"
                 />
               </div>
@@ -90,12 +113,12 @@ const NewProject = () => {
                     <SelectValue placeholder="Select industry" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="healthcare">Healthcare</SelectItem>
-                    <SelectItem value="finance">Finance</SelectItem>
-                    <SelectItem value="retail">Retail</SelectItem>
-                    <SelectItem value="manufacturing">Manufacturing</SelectItem>
-                    <SelectItem value="insurance">Insurance</SelectItem>
-                    <SelectItem value="education">Education</SelectItem>
+                    <SelectItem value="Healthcare">Healthcare</SelectItem>
+                    <SelectItem value="Finance">Finance</SelectItem>
+                    <SelectItem value="Retail">Retail</SelectItem>
+                    <SelectItem value="Manufacturing">Manufacturing</SelectItem>
+                    <SelectItem value="Insurance">Insurance</SelectItem>
+                    <SelectItem value="Education">Education</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -104,12 +127,12 @@ const NewProject = () => {
                 <Input
                   id="projectType"
                   placeholder="e.g., Cloud Migration"
-                  value={formData.projectType}
-                  onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
+                  value={formData.project_type}
+                  onChange={(e) => setFormData({ ...formData, project_type: e.target.value })}
                   className="bg-input/50 border-border/50"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="region">Region</Label>
                 <Input
                   id="region"
@@ -124,7 +147,7 @@ const NewProject = () => {
 
           {/* RFP Upload */}
           <Card className="glass-card p-6">
-            <h2 className="text-2xl font-bold mb-6">Upload RFP</h2>
+            <h2 className="text-2xl font-bold mb-6">Upload RFP (Optional)</h2>
             <div className="border-2 border-dashed border-border/50 rounded-lg p-12 text-center hover:border-primary/50 transition-colors cursor-pointer">
               <Upload className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-lg font-semibold mb-2">Drag & drop your RFP here</p>
@@ -174,12 +197,12 @@ const NewProject = () => {
               {isAnalyzing ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Analyzing RFP...
+                  Creating Project...
                 </>
               ) : (
                 <>
                   <Sparkles className="w-5 h-5" />
-                  Analyze RFP
+                  Create Project
                 </>
               )}
             </Button>
