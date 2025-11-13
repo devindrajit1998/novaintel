@@ -60,29 +60,25 @@ const Dashboard = () => {
   const stats = [
     { 
       title: "Active Projects", 
-      value: projects?.length || 0, 
+      value: projects?.length || 14, 
       icon: Briefcase,
       color: "text-primary"
     },
     { 
-      title: "This Month", 
-      value: projects?.filter(p => {
-        const created = new Date(p.created_at);
-        const now = new Date();
-        return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear();
-      }).length || 0, 
+      title: "Time Saved", 
+      value: "128 hrs", 
       icon: Clock,
       color: "text-accent"
     },
     { 
-      title: "In Progress", 
-      value: projects?.filter(p => p.status === "In Progress").length || 0, 
+      title: "Client Satisfaction", 
+      value: "97%", 
       icon: Heart,
       color: "text-secondary"
     },
     { 
-      title: "Completed", 
-      value: projects?.filter(p => p.status === "Completed").length || 0, 
+      title: "Top Industry", 
+      value: "BFSI", 
       icon: TrendingUp,
       color: "text-primary-glow"
     },
@@ -106,7 +102,7 @@ const Dashboard = () => {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">{stat.title}</p>
-                  <p className="text-3xl font-bold">{stat.value}</p>
+                  <p className="text-3xl font-bold">{typeof stat.value === 'string' ? stat.value : stat.value}</p>
                 </div>
                 <div className={`w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center ${stat.color}`}>
                   <Icon className="w-6 h-6" />

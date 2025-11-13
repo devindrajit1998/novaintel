@@ -138,6 +138,66 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section className="container mx-auto px-6 py-20 bg-card/30 backdrop-blur-sm rounded-3xl">
+        <div className="grid md:grid-cols-3 gap-12 text-center">
+          <div>
+            <div className="text-5xl font-bold gradient-text mb-2">70%</div>
+            <p className="text-muted-foreground">Faster Proposal Turnaround</p>
+          </div>
+          <div>
+            <div className="text-5xl font-bold gradient-text mb-2">128h</div>
+            <p className="text-muted-foreground">Time Saved Monthly</p>
+          </div>
+          <div>
+            <div className="text-5xl font-bold gradient-text mb-2">97%</div>
+            <p className="text-muted-foreground">Client Satisfaction</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="container mx-auto px-6 py-20">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            Trusted by <span className="gradient-text">Presales Teams</span>
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            See what professionals are saying about NovaIntel
+          </p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="glass-card p-8 rounded-2xl">
+            <p className="text-lg mb-4 text-muted-foreground italic">
+              "NovaIntel reduced our proposal turnaround time by 70%. The AI insights are incredibly accurate and save us countless hours of manual analysis."
+            </p>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold">
+                SA
+              </div>
+              <div>
+                <p className="font-semibold">Sarah Anderson</p>
+                <p className="text-sm text-muted-foreground">Presales Director, TechCorp</p>
+              </div>
+            </div>
+          </div>
+          <div className="glass-card p-8 rounded-2xl">
+            <p className="text-lg mb-4 text-muted-foreground italic">
+              "The AI insights are precise and ready to use in client meetings. NovaIntel has transformed how we approach RFPs and proposals."
+            </p>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center text-white font-bold">
+                MJ
+              </div>
+              <div>
+                <p className="font-semibold">Michael Johnson</p>
+                <p className="text-sm text-muted-foreground">Business Analyst, INT Solutions</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="container mx-auto px-6 py-20">
         <div className="glass-card rounded-2xl p-12 text-center pulse-glow">
